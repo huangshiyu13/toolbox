@@ -220,17 +220,22 @@ if( format==0 )
   fId=fopen(fName);
   if(fId==-1), error(['unable to open file: ' fName]); end; v=0;
   try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, end %#ok<CTCH>
+  
   if(isempty(v)), v=0; end
   % read in annotation (m is number of fields for given version v)
   if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
   frmt='%s %d %d %d %d %d %d %d %d %d %d %d';
   ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
   in=textscan(fId,frmt); for i=2:m, in{i}=double(in{i}); end; fclose(fId);
+  
   % create objs struct from read in fields
  
   n=length(in{1}); objs=create(n);
-  
-  for i=1:n, objs(i).lbl=in{1}{i}; objs(i).occ=in{6}(i); end
+
+  for i=1:n, 
+      objs(i).lbl=in{1}{i}; 
+      objs(i).occ=in{6}(i); 
+  end
   bb=[in{2} in{3} in{4} in{5}]; bbv=[in{7} in{8} in{9} in{10}];
   for i=1:n, objs(i).bb=bb(i,:); objs(i).bbv=bbv(i,:); end
   if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
@@ -540,7 +545,10 @@ function [gt0,dt0] = loadAll( gtDir, dtDir, pLoad )
 % get list of files
 if(nargin<2), dtDir=[]; end
 if(nargin<3), pLoad={}; end
-if(isempty(dtDir)), fs=getFiles({gtDir}); gtFs=fs(1,:); else
+if(isempty(dtDir)), 
+    gtFs=myGetFiles(gtDir,'*.txt'); 
+%     gtFs=fs(1,:); 
+else
   dtFile=length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt');
   if(dtFile), dirs={gtDir}; else dirs={gtDir,dtDir}; end
   fs=getFiles(dirs); gtFs=fs(1,:);
@@ -563,6 +571,33 @@ else
   dt1=load(dtFs,'-ascii'); if(numel(dt1)==0), dt1=zeros(0,6); end
   ids=dt1(:,1); assert(max(ids)<=n);
   dt0=cell(1,n); for i=1:n, dt0{i}=dt1(ids==i,2:6); end
+end
+
+end
+
+function [gt0,dt0] = myLoadAll( gtDir, dtDir, pLoad )
+if(nargin<2), dtDir=[]; end
+if(nargin<3), pLoad={}; end
+if(isempty(dtDir)), 
+    gtFs=myGetFiles(gtDir,'*.txt'); 
+else
+    gtFs=myGetFiles(gtDir,'*.txt');
+    dtFs=myGetFiles(dtDir,'*.txt');
+end
+
+% load ground truth
+persistent keyPrv gtPrv; key={gtDir,pLoad}; n=length(gtFs);
+if(isequal(key,keyPrv)), gt0=gtPrv; else gt0=cell(1,n);
+  for i=1:n, [~,gt0{i}]=bbLoad(gtFs{i},pLoad); end
+  gtPrv=gt0; keyPrv=key;
+end
+
+% load detections
+if(isempty(dtDir) || nargout<=1), dt0=cell(0); return; end
+persistent keyPrv2 dtPrv; key={dtDir,pLoad}; n=length(dtFs);
+if(isequal(key,keyPrv2)), dt0=dtPrv; else dt0=cell(1,n);
+  for i=1:n, [~,dt0{i}]=bbLoad(dtFs{i},pLoad); end
+  dtPrv=dt0; keyPrv2=key;
 end
 
 end
@@ -888,4 +923,18 @@ function oa = compOa( dt, gt, ig )
 w=min(dt(3)+dt(1),gt(3)+gt(1))-max(dt(1),gt(1)); if(w<=0),oa=0; return; end
 h=min(dt(4)+dt(2),gt(4)+gt(2))-max(dt(2),gt(2)); if(h<=0),oa=0; return; end
 i=w*h; if(ig),u=dt(3)*dt(4); else u=dt(3)*dt(4)+gt(3)*gt(4)-i; end; oa=i/u;
+end
+
+function out = myGetFiles( dirName, houzhui)
+
+    if(nargin<2),
+        files = dir(fullfile(dirName));
+    else
+        files = dir(fullfile(dirName,houzhui));
+    end
+    
+    len = size(files,1);
+    for i = 1:len
+        out{i} = [dirName '/' files(i).name];
+    end
 end
