@@ -355,7 +355,12 @@ function out = acfbbload(fName,varargin)
       n=length(in{1}); 
 
       for i=1:n, 
-          out{i} = [in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          if i == 1,
+            out = [in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          else
+            out = [out;in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          end
+          
       end
       
     end

@@ -355,7 +355,11 @@ function out = acfbbload(fName,varargin)
       n=length(in{1}); 
 
       for i=1:n, 
-          out{i} = [in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          if i == 1,
+            out = [out;in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          else
+          end
+          
       end
       
     end
@@ -620,7 +624,7 @@ end
 % load ground truth
 persistent keyPrv gtPrv; key={gtDir,pLoad}; n=length(gtFs);
 if(isequal(key,keyPrv)), gt0=gtPrv; else gt0=cell(1,n);
-  for i=1:n, [~,gt0{i}]=mybbload(gtFs{i},pLoad); end
+  for i=1:n, gt0{i}=acfbbload(gtFs{i},pLoad); end
   gtPrv=gt0; keyPrv=key;
 end
 
@@ -628,7 +632,7 @@ end
 if(isempty(dtDir) || nargout<=1), dt0=cell(0); return; end
 persistent keyPrv2 dtPrv; key={dtDir,pLoad}; n=length(dtFs);
 if(isequal(key,keyPrv2)), dt0=dtPrv; else dt0=cell(1,n);
-  for i=1:n, dt0{i}=mybbload(dtFs{i},pLoad); end
+  for i=1:n, dt0{i}=acfbbload(dtFs{i},pLoad); end
   dtPrv=dt0; keyPrv2=key;
 end
 
