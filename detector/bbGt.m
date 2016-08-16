@@ -805,8 +805,11 @@ if(nargin<3 || isempty(roc)), roc=1; end
 if(nargin<4 || isempty(ref)), ref=[]; end
 % convert to single matrix, discard ignore bbs
 nImg=length(gt); assert(length(dt)==nImg);
-gt=cat(1,gt{:}); gt=gt(gt(:,5)~=-1,:);
-dt=cat(1,dt{:}); dt=dt(dt(:,6)~=-1,:);
+
+gt=cat(1,gt{:}); 
+gt=gt(gt(:,5)~=-1,:);
+dt=cat(1,dt{:}); 
+dt=dt(dt(:,6)~=-1,:);
 % compute results
 if(size(dt,1)==0), xs=0; ys=0; score=0; ref=ref*0; return; end
 m=length(ref); np=size(gt,1); score=dt(:,5); tp=dt(:,6);
