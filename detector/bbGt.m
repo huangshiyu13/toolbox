@@ -348,11 +348,19 @@ function out = acfbbload(fName,varargin)
       if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
       frmt='%s %d %d %d %d %d %d %d %d %d %d %d';
       ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
-      in=textscan(fId,frmt); for i=2:m, in{i}=double(in{i}); end; fclose(fId);
+      in=textscan(fId,frmt); 
+      fclose(fId);
+      n=length(in{1}); 
+      n
+      if(n==0), out=zeros(0,5); return;end
+      for i=2:m, 
+          in{i}=double(in{i}); 
+      end; 
+      
 
       % create objs struct from read in fields
 
-      n=length(in{1}); 
+      
 
       for i=1:n, 
           if i == 1,
@@ -632,8 +640,13 @@ end
 % load detections
 if(isempty(dtDir) || nargout<=1), dt0=cell(0); return; end
 persistent keyPrv2 dtPrv; key={dtDir,pLoad}; n=length(dtFs);
-if(isequal(key,keyPrv2)), dt0=dtPrv; else dt0=cell(1,n);
-  for i=1:n, dt0{i}=acfbbload(dtFs{i},pLoad); end
+if(isequal(key,keyPrv2)), dt0=dtPrv; 
+else
+  dt0=cell(1,n);
+  for i=1:n, 
+      dtFs{i}
+      dt0{i}=acfbbload(dtFs{i},pLoad); 
+  end
   dtPrv=dt0; keyPrv2=key;
 end
 
