@@ -227,7 +227,9 @@ if( format==0 )
   ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
   in=textscan(fId,frmt); for i=2:m, in{i}=double(in{i}); end; fclose(fId);
   % create objs struct from read in fields
+ 
   n=length(in{1}); objs=create(n);
+  
   for i=1:n, objs(i).lbl=in{1}{i}; objs(i).occ=in{6}(i); end
   bb=[in{2} in{3} in{4} in{5}]; bbv=[in{7} in{8} in{9} in{10}];
   for i=1:n, objs(i).bb=bb(i,:); objs(i).bbv=bbv(i,:); end
@@ -261,9 +263,11 @@ else error('bbLoad() unknown format: %i',format);
 end
 
 % only keep objects whose lbl is in lbls or ilbls
+
 if(~isempty(lbls) || ~isempty(ilbls)), K=true(n,1);
   for i=1:n, K(i)=any(strcmp(objs(i).lbl,[lbls ilbls])); end
   objs=objs(K); n=length(objs);
+  
 end
 
 % filter objs (set ignore flags)
@@ -295,7 +299,9 @@ if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
 end
 
 % finally get extent of each bounding box (not trivial if ang~=0)
-if(nargout<=1), return; end; if(n==0), bbs=zeros(0,5); return; end
+
+if(nargout<=1), return; end; 
+if(n==0), bbs=zeros(0,5); return; end
 bbs=double([reshape([objs.bb],4,[]); [objs.ign]]'); ign=bbs(:,5)==1;
 for i=1:n, bbs(i,1:4)=bbExtent(bbs(i,1:4),objs(i).ang,ellipse); end
 if(~isempty(sqr)), bbs(~ign,:)=bbApply('squarify',bbs(~ign,:),sqr{:}); end
