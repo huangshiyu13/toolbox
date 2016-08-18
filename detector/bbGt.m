@@ -276,9 +276,16 @@ if(~isempty(lbls) || ~isempty(ilbls)), K=true(n,1);
 end
 
 % filter objs (set ignore flags)
-for i=1:n, objs(i).ang=mod(objs(i).ang,360); end
-if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
-    objs(i).ign = objs(i).ign || any(strcmp(v,ilbls)); end; end
+for i=1:n, 
+    objs(i).ang=mod(objs(i).ang,360); 
+end
+
+if(~isempty(ilbls)), 
+    for i=1:n, 
+        v=objs(i).lbl;
+        objs(i).ign = objs(i).ign || any(strcmp(v,ilbls)); 
+    end; 
+end
 if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1);
     objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
 if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1)+objs(i).bb(3);
@@ -351,7 +358,6 @@ function out = acfbbload(fName,varargin)
       in=textscan(fId,frmt); 
       fclose(fId);
       n=length(in{1}); 
-      n
       if(n==0), out=zeros(0,5); return;end
       for i=2:m, 
           in{i}=double(in{i}); 
@@ -644,7 +650,6 @@ if(isequal(key,keyPrv2)), dt0=dtPrv;
 else
   dt0=cell(1,n);
   for i=1:n, 
-      dtFs{i}
       dt0{i}=acfbbload(dtFs{i},pLoad); 
   end
   dtPrv=dt0; keyPrv2=key;
@@ -989,5 +994,24 @@ function out = myGetFiles( dirName, houzhui)
     len = size(files,1);
     for i = 1:len
         out{i} = [dirName '/' files(i).name];
+    end
+end
+
+
+function gt0 = loadCaltechGT(gtDir,pLoad)
+    gtFs=myGetFiles(gtDir,'*.txt'); 
+    
+    persistent keyPrv gtPrv; 
+    key={gtDir,pLoad}; 
+    n=length(gtFs);
+    if(isequal(key,keyPrv)), 
+      gt0=gtPrv; 
+    else
+      gt0=cell(1,n);
+      for i=1:n, 
+          gt0{i}=acfbbload(gtFs{i},pLoad); 
+      end
+      gtPrv=gt0; 
+      keyPrv=key;
     end
 end
