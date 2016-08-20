@@ -503,12 +503,21 @@ if(nargin<2 || isempty(f0)), f0=1; end
 if(nargin<3 || isempty(f1)), f1=inf; end
 m=length(dirs); assert(m>0); sep=filesep;
 
-for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
-  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
+for d=1:m, 
+    dir1=dirs{d}; 
+    dir1(dir1=='\')=sep; 
+    dir1(dir1=='/')=sep;
+    if(dir1(end)==sep), 
+        dir1(end)=[]; 
+    end; 
+    dirs{d}=dir1; 
+end
 
 [fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
 n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
-for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
+for d=2:m, 
+    fs(d,:)=getFiles1(dirs{d},fs0,sep); 
+end
 
   function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
     % get fs1 in dir1 (and fs0 without path or extension)
@@ -532,6 +541,53 @@ for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
     end
     for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
   end
+end
+
+function fs = loadFiles( cfgFile )
+    
+    fid=fopen(cfgFile);
+    
+    tline = fgetl(fid);
+    inin = 1;
+    while ischar(tline)
+        if inin == 1,
+            inin = 0;
+            fs = getFilesFromLine(tline);
+        else
+            fs = cat(2,fs,getFilesFromLine(tline));
+        end
+        tline = fgetl(fid);
+    end
+    fclose(fid);
+    
+    
+    function files = getFilesFromLine(lineNow)
+        strs = regexp(lineNow, ' ', 'split');
+        dirName = strs{1};
+        ffs = dir(fullfile(dirName,'images','*.jpg'));
+        ffs = cat(1,ffs,dir(fullfile(dirName,'images','*.png')));
+        len = size(ffs,1);
+        
+        selectedNum = str2num(strs{2});
+        if selectedNum == -1 || selectedNum >= len,
+            files = cell(2,len);
+            for i = 1:len
+                files{1,i} = [dirName '/images/' ffs(i).name];
+                [~,nameNow,~] = fileparts(files{1,i});
+                files{2,i} = [dirName '/annotations/' nameNow '.txt'];
+            end
+        else
+            selected = randperm(len, selectedNum);
+            files = cell(2,selectedNum);
+            for i = 1:selectedNum
+                files{1,i} = [dirName '/images/' ffs(selected(i)).name];
+                [~,nameNow,~] = fileparts(files{1,i});
+                files{2,i} = [dirName '/annotations/' nameNow '.txt'];
+            end
+        end
+        
+        
+    end
 end
 
 function fs = copyFiles( fs, dirs )
