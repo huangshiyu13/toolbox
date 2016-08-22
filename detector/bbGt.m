@@ -296,8 +296,11 @@ if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2)+objs(i).bb(4);
     objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
 if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
     objs(i).ign = objs(i).ign || v<wRng(1) || v>wRng(2); end; end
-if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
-    objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); end; end
+if(~isempty(hRng)),  
+    for i=1:n, v=objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); 
+    end; 
+end
 if(~isempty(oRng)),  for i=1:n, v=objs(i).ang; if(v>180), v=v-360; end
     objs(i).ign = objs(i).ign || v<oRng(1) || v>oRng(2); end; end
 if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
@@ -367,16 +370,25 @@ function out = acfbbload(fName,varargin)
       % create objs struct from read in fields
 
       
-
+      inin = 0;
       for i=1:n, 
-          if i == 1,
-            out = [in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+          if inin == 0,
+              if(isempty(hRng) || ( in{5}(i)>=hRng(1) || in{5}(i)<=hRng(2)) ),  
+                    out = [in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+                    inin = 1;
+              end
+              
           else
-            out = [out;in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+              if(isempty(hRng) || ( in{5}(i)>=hRng(1) || in{5}(i)<=hRng(2)) ),  
+                    out = [out;in{2}(i) in{3}(i) in{4}(i) in{5}(i) in{6}(i)];
+              end
           end
           
       end
-      
+      if(~isempty(sqr)), 
+          out=bbApply('squarify',out,sqr{:}); 
+          
+      end
     end
 end
 
@@ -555,6 +567,8 @@ function fs = loadFiles( cfgFile )
             fs = getFilesFromLine(tline);
         else
             fs = cat(2,fs,getFilesFromLine(tline));
+%             tline
+%             size(fs)
         end
         tline = fgetl(fid);
     end
