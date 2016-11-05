@@ -703,7 +703,7 @@ if(isempty(dtDir)),
     gtFs=myGetFiles(gtDir,'*.txt'); 
 else
     gtFs=myGetFiles(gtDir,'*.txt');
-    dtFs=myGetFiles2(dtDir,'*.txt',gtDir);
+    dtFs=myGetFiles(dtDir,'*.txt');
 end
 
 % load ground truth
@@ -717,7 +717,6 @@ end
 disp(dtDir)
 if(isempty(dtDir) || nargout<=1), dt0=cell(0); return; end
 persistent keyPrv2 dtPrv; key={dtDir,pLoad}; n2=length(dtFs);
-assert(n == n2)
 if(isequal(key,keyPrv2)), dt0=dtPrv; 
 else
   dt0=cell(1,n);
@@ -1075,24 +1074,6 @@ function out = myGetFiles( dirName, houzhui)
     end
 end
 
-function out = myGetFiles2( dirName, houzhui,searchArea)
-
-    if(nargin<2),
-        files = dir(fullfile(searchArea));
-    else
-        files = dir(fullfile(searchArea,houzhui));
-    end
-    
-    len = size(files,1);
-    k = 0;
-    for i = 1:len
-        if files(i).name(1) == '.'
-            continue;
-        end
-        k = k+1;
-        out{k} = [dirName '/' files(i).name];
-    end
-end
 
 function gt0 = loadCaltechGT(gtDir,pLoad)
     gtFs=myGetFiles(gtDir,'*.txt'); 
