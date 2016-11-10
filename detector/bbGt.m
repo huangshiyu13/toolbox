@@ -341,6 +341,7 @@ if(~isempty(sqr)), bbs(~ign,:)=bbApply('squarify',bbs(~ign,:),sqr{:}); end
 end
 
 function out = acfbbload(fName,varargin)
+
     df={'format',0,'ellipse',1,'squarify',[],'lbls',[],'ilbls',[],'hRng',[],...
   'wRng',[],'aRng',[],'arRng',[],'oRng',[],'xRng',[],'yRng',[],'vRng',[]};
 [format,ellipse,sqr,lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng]...
@@ -1057,7 +1058,7 @@ i=w*h; if(ig),u=dt(3)*dt(4); else u=dt(3)*dt(4)+gt(3)*gt(4)-i; end; oa=i/u;
 end
 
 function out = myGetFiles( dirName, houzhui)
-
+    
     if(nargin<2),
         files = dir(fullfile(dirName));
     else
