@@ -715,7 +715,7 @@ if(isequal(key,keyPrv)), gt0=gtPrv; else gt0=cell(1,n);
 end
 
 % load detections
-disp(dtDir)
+% disp(dtDir)
 if(isempty(dtDir) || nargout<=1), dt0=cell(0); return; end
 persistent keyPrv2 dtPrv; key={dtDir,pLoad}; n2=length(dtFs);
 assert(n == n2)
