@@ -38,7 +38,6 @@ function model = adaBoostTrain( X0, X1, varargin )
 %   .errs       - [1 x nWeak] error for each tree (for debugging)
 %   .losses     - [1 x nWeak] loss after every iteration (for debugging)
 %   .treeDepth  - depth of all leaf nodes (or 0 if leaf depth varies)
-  [errsSt,thrsSt] = binaryTreeTrain1(X0,X1,single(wts0/w))
 %
 % EXAMPLE
 %  % output should be: 'Testing err=0.0145 fp=0.0165 fn=0.0125'
