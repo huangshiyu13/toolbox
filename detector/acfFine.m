@@ -1,6 +1,24 @@
 function detector = acfFine( varargin )
+detector = varargin{2};
 
-opts = initializeOpts( varargin{1} );
+optsT = initializeOpts( varargin{1} );
+opts = detector.opts;
+
+
+opts.modelDs=optsT.modelDs; 
+opts.modelDsPad=optsT.modelDsPad;
+opts.pPyramid.pChns.pColor.smooth=optsT.pPyramid.pChns.pColor.smooth; 
+opts.nWeak=optsT.nWeak;
+opts.pBoost.pTree.maxDepth=optsT.pBoost.pTree.maxDepth; 
+opts.nNeg=optsT.nNeg; 
+opts.nAccNeg=optsT.nAccNeg;
+opts.pPyramid.pChns.pGradHist.softBin=optsT.pPyramid.pChns.pGradHist.softBin; 
+opts.pJitter=optsT.pJitter;
+opts.posGtDir=optsT.posGtDir;
+opts.posImgDir=optsT.posImgDir;
+opts.pPyramid.pChns.shrink=optsT.pPyramid.pChns.shrink; 
+opts.name=optsT.name;
+opts.pLoad = optsT.pLoad;
 
 nm=[opts.name 'Detector.mat']; t=0;%exist(nm,'file');
 
@@ -8,7 +26,7 @@ nm=[opts.name 'Detector.mat']; t=0;%exist(nm,'file');
 
 t=fileparts(nm); if(~isempty(t) && ~exist(t,'dir')), mkdir(t); end
 
-detector = varargin{2};
+
 % detector = struct( 'opts',opts, 'clf',[], 'info',[] );
 startTrain=clock; 
 nm=[opts.name 'Log.txt'];
