@@ -8,8 +8,8 @@ nm=[opts.name 'Detector.mat']; t=0;%exist(nm,'file');
 
 t=fileparts(nm); if(~isempty(t) && ~exist(t,'dir')), mkdir(t); end
 
-% detector = varargin{2};
-detector = struct( 'opts',opts, 'clf',[], 'info',[] );
+detector = varargin{2};
+% detector = struct( 'opts',opts, 'clf',[], 'info',[] );
 startTrain=clock; 
 nm=[opts.name 'Log.txt'];
 if(exist(nm,'file')), 
